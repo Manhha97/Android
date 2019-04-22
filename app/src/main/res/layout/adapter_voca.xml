@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+
+
+    <ImageButton
+        android:id="@+id/imagebuttonSpeak"
+        android:layout_width="40dp"
+        android:background="@drawable/ic_speak"
+        android:layout_centerVertical="true"
+        android:layout_height="40dp" />
+
+    <LinearLayout
+        android:id="@+id/linear_adapter"
+        android:layout_toRightOf="@id/imagebuttonSpeak"
+        android:layout_toLeftOf="@id/imagebuttonFavorite"
+        android:layout_width="match_parent"
+        android:padding="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textviewVoca"
+            android:text="Voca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#757575"
+            android:textSize="20dp"
+            android:maxLines="1"/>
+
+        <TextView
+            android:text="Mean"
+            android:layout_marginTop="3dp"
+            android:id="@+id/textviewMean"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#bdbdbd"
+            android:textSize="15dp"
+            android:maxLines="1"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_alignParentRight="true"
+        android:id="@+id/imagebuttonFavorite"
+        android:layout_centerVertical="true"
+        android:layout_width="30dp"
+        android:background="@drawable/ic_not_favorite"
+        android:layout_height="30dp" />
+
+</RelativeLayout>

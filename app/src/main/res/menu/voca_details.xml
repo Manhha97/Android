@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_statistic"
+        android:title="abc"
+        android:icon="@drawable/ic_statistic"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/menu_quiz"
+        android:title="abc"
+        android:icon="@drawable/ic_quiz"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/menu_show_voca"
+        android:title="abc"
+        android:icon="@drawable/ic_navi"
+        app:showAsAction="always"
+        />
+
+
+
+
+</menu>
