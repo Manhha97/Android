@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.activity.MainActivity;
@@ -24,6 +25,7 @@ public class SchedulingService  extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d("Scheduling Service", "[running notification]");
         Voca voca = (Voca) intent.getSerializableExtra(Const.VOCA);
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent

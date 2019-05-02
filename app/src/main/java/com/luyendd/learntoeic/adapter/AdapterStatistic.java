@@ -58,13 +58,30 @@ public class AdapterStatistic extends BaseAdapter {
         int incorrect = resultTestList.get(position).getTotal() - resultTestList.get(position).getCorrect();
         vht.tvIncorrect.setText("Incorrect : " + incorrect);
 
-        if (position == 0 || resultTestList.get(position).getCorrect() > resultTestList.get(position - 1).getCorrect()) {
-          vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_up));
-        } else if (resultTestList.get(position).getCorrect() == resultTestList.get(position - 1).getCorrect())  {
-            vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row));
+        if(position != resultTestList.size() - 1) {
+            if (resultTestList.get(position).getCorrect() > resultTestList.get(position + 1).getCorrect()){
+                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_up));
+            }else if (resultTestList.get(position).getCorrect() == resultTestList.get(position + 1).getCorrect()) {
+                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row));
+            } else {
+                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_down));
+            }
         } else {
-            vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_down));
+            vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_up));
         }
+
+
+//        if (position == 0){
+//
+//        } else {
+//            if (resultTestList.get(position).getCorrect() > resultTestList.get(position - 1).getCorrect()){
+//                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_up));
+//            }else if (resultTestList.get(position).getCorrect() == resultTestList.get(position - 1).getCorrect()) {
+//                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row));
+//            } else {
+//                vht.iv.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_row_down));
+//            }
+//        }
 
         return convertView;
     }

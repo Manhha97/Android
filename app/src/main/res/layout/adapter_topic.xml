@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     android:layout_margin="5dp"
     android:padding="5dp"
     android:background="#f5f5f5"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="300dp"
+    android:layout_height="200dp">
 
     <ImageView
         android:id="@+id/imageViewTopic"
@@ -13,6 +14,7 @@
 
 
     <TextView
+        android:layout_alignParentBottom="true"
         android:id="@+id/textViewTopic"
         android:textSize="15sp"
         android:padding="5dp"
@@ -23,4 +25,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</FrameLayout>
+</RelativeLayout>

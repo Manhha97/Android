@@ -1,8 +1,15 @@
 package com.luyendd.learntoeic.activity;
 
+import android.app.AlarmManager;
+import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -13,8 +20,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -23,7 +33,8 @@ import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.adapter.AdapterTopic;
 import com.luyendd.learntoeic.obj.Topic;
 import com.luyendd.learntoeic.obj.Voca;
-import com.luyendd.learntoeic.utils.AlarmUtils;
+import com.luyendd.learntoeic.service.SchedulingService;
+import com.luyendd.learntoeic.utils.AlarmUtil;
 import com.luyendd.learntoeic.utils.Const;
 import com.smarteist.autoimageslider.DefaultSliderView;
 import com.smarteist.autoimageslider.IndicatorAnimations;
@@ -36,47 +47,63 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     SliderLayout sliderLayout;
     GridView gridView;
-    public  static ConnectDataBase cdb;
+    public static ConnectDataBase cdb;
     List<Topic> topicList;
-    public static List<Voca> vocaList = new ArrayList<>();
     List<Voca> vocaFavorite = new ArrayList<>();
     AdapterTopic adapterTopic;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     private DrawerLayout dl;
     private ActionBarDrawerToggle t;
     private NavigationView nv;
+    final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dl = (DrawerLayout)findViewById(R.id.activity_main);
-        t = new ActionBarDrawerToggle(this, dl,R.string.Open, R.string.Close);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = sharedPreferences.edit();
 
+        dl = (DrawerLayout) findViewById(R.id.activity_main);
+        t = new ActionBarDrawerToggle(this, dl, R.string.Open, R.string.Close);
         dl.addDrawerListener(t);
         t.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        nv = (NavigationView)findViewById(R.id.nv);
+        nv = (NavigationView) findViewById(R.id.nv);
         nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
-                switch(id)
-                {
+                switch (id) {
                     case R.id.menu_remider_voca:
-                        Toast.makeText(MainActivity.this, "menu_remider_voca",Toast.LENGTH_SHORT).show();
-                        AlarmUtils.create(MainActivity.this, vocaFavorite);
+//                        Toast.makeText(MainActivity.this, "menu_remider_voca",Toast.LENGTH_SHORT).show();
+//                        if (vocaFavorite.size() != 0) {
+//                            turnOnAlarm(MainActivity.this, vocaFavorite);
+//                            Toast.makeText(MainActivity.this, "Turn on alarm voca",Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Toast.makeText(MainActivity.this, "Voca favourite is null",Toast.LENGTH_SHORT).show();
+//                        }
+                        if (AlarmUtil.initAlarm(MainActivity.this)) {
+                            showDialogRemider();
+                        }
                         return true;
-                    case R.id.menu_setting_time:
-                        Toast.makeText(MainActivity.this, "Settings",Toast.LENGTH_SHORT).show();
-                        settingTime();
+
+                    case R.id.menu_favourite:
+                        Intent i = new Intent(MainActivity.this, VocaDetailsActivity.class);
+                        i.putExtra(Const.TOPIC_FAVOURITE, true);
+                        i.putExtra(Const.TOPIC_NAME, "Favourite");
+                        startActivity(i);
                         return true;
 
                     default:
@@ -85,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
 
         sliderLayout = findViewById(R.id.imageSlider);
         sliderLayout.setIndicatorAnimation(IndicatorAnimations.SWAP); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
@@ -98,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             cdb.createDataBase();
             topicList = cdb.getListTopic();
-            vocaFavorite = cdb.getListFavorite();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -114,19 +139,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(MainActivity.this, topicList.get(position).getTranslate(), Toast.LENGTH_SHORT).show();
-                vocaList.clear();
-                try {
-                    vocaList = cdb.getVocaFromTopic(position+1);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
                 Intent i = new Intent(MainActivity.this, VocaDetailsActivity.class);
                 i.putExtra(Const.TOPIC_ID, topicList.get(position).getId());
                 i.putExtra(Const.TOPIC_NAME, topicList.get(position).getTranslate());
                 startActivity(i);
             }
         });
-
     }
 
     private void setSliderViews() {
@@ -174,12 +192,15 @@ public class MainActivity extends AppCompatActivity {
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker,final int selectedHour,final int selectedMinute) {
+            public void onTimeSet(TimePicker timePicker, final int selectedHour, final int selectedMinute) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(MainActivity.this,
                                 selectedHour + ":" + selectedMinute, Toast.LENGTH_SHORT).show();
+                        editor.putInt(Const.ALARM_HOUR, selectedHour);
+                        editor.putInt(Const.ALARM_MINUTE, selectedMinute);
+                        editor.commit();
                     }
                 });
             }
@@ -191,10 +212,102 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(t.onOptionsItemSelected(item))
+        if (t.onOptionsItemSelected(item))
             return true;
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDialogRemider() {
+
+        int hour, minute;
+        boolean isReminder;
+        hour = sharedPreferences.getInt(Const.ALARM_HOUR, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+        minute = sharedPreferences.getInt(Const.ALARM_MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+        isReminder = sharedPreferences.getBoolean(Const.IS_REMINDER_VOCA, false);
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_remider);
+
+        final Switch swReminder = dialog.findViewById(R.id.switchReminder);
+        final TimePicker timePicker = dialog.findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
+        if (Build.VERSION.SDK_INT > 22) {
+            timePicker.setHour(hour);
+            timePicker.setMinute(minute);
+        } else {
+            timePicker.setCurrentHour(hour);
+            timePicker.setCurrentMinute(minute);
+        }
+
+
+        Button btSave = dialog.findViewById(R.id.btnSaveTime);
+        Button btClose = dialog.findViewById(R.id.btnClose);
+
+        swReminder.setChecked(isReminder);
+        swReminder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean(Const.IS_REMINDER_VOCA, isChecked).commit();
+                Log.d(TAG, "[switch status] : " + isChecked);
+                if (isChecked) {
+                    if (!AlarmUtil.initAlarm(MainActivity.this)) {
+                        Toast.makeText(MainActivity.this, "Voca favourite is null", Toast.LENGTH_SHORT).show();
+                        swReminder.setChecked(false);
+                    }
+                }
+
+//                if (isChecked) {
+//                    turnOnAlarm();
+//                } else {
+//                    turnOffAlarm();
+//                }
+            }
+        });
+
+        btClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sharedPreferences.getBoolean(Const.IS_REMINDER_VOCA, false)) {
+                    AlarmUtil.turnOnAlarm(MainActivity.this);
+                } else {
+                    AlarmUtil.turnOffAlarm();
+                }
+                dialog.dismiss();
+            }
+        });
+
+        btSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = Build.VERSION.SDK_INT > 22 ? timePicker.getHour() : timePicker.getCurrentHour();
+                int minute = Build.VERSION.SDK_INT > 22 ? timePicker.getMinute() : timePicker.getCurrentMinute();
+                editor.putInt(Const.ALARM_MINUTE, minute);
+                editor.putInt(Const.ALARM_HOUR, hour);
+                editor.commit();
+                Log.d(TAG, "[Button Save] " + hour + " : " + minute);
+                if (sharedPreferences.getBoolean(Const.IS_REMINDER_VOCA, false)) {
+                    AlarmUtil.turnOnAlarm(MainActivity.this);
+                } else {
+                    AlarmUtil.turnOffAlarm();
+                 }
+
+//                Voca voca = null;
+//                try {
+//                    voca = cdb.getListFavorite().get(new Random().nextInt(cdb.getListFavorite().size() - 1));
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//                Intent intent = new Intent(MainActivity.this, SchedulingService.class);
+//                intent.putExtra(Const.VOCA, voca);
+//                startService(intent);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.create();
+        dialog.show();
+
+
     }
 
 }

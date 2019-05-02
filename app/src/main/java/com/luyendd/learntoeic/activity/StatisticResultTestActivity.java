@@ -2,6 +2,7 @@ package com.luyendd.learntoeic.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.luyendd.learntoeic.ConnectDataBase;
@@ -25,6 +26,8 @@ public class StatisticResultTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_result_test);
         getSupportActionBar().setTitle("Statistic Result");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         topicId = getIntent().getIntExtra(Const.TOPIC_ID, 1);
         connectDataBase = new ConnectDataBase(this);
@@ -35,8 +38,13 @@ public class StatisticResultTestActivity extends AppCompatActivity {
         lv = findViewById(R.id.list_view_statistic);
         lv.setAdapter(as);
         as.notifyDataSetChanged();
+    }
 
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

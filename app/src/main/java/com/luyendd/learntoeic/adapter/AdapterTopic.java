@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.obj.Topic;
 
@@ -62,12 +63,16 @@ public class AdapterTopic extends BaseAdapter {
 
 //        int resID = context.getResources().getIdentifier(drawableName, "drawable",  getPackageName());
 //
-//        Glide.with(context)
-//                .load("file:///android_asset/image/"+
-//                        topicList.get(position).getName().toLowerCase() + ".jpg")
-//                .into(vht.iv);
-        vht.iv.setBackgroundDrawable(getBitmapFromAssets("image/" + topicList.get(position).getName().toLowerCase()
-                .replace(" ", "_") + ".jpg"));
+        RequestOptions options = new RequestOptions();
+        options.centerCrop();
+        options.fitCenter();
+        Glide.with(context)
+                .load("file:///android_asset/image/"+
+                        topicList.get(position).getName().toLowerCase()
+                                .replace(" ", "_") + ".jpg")
+                .apply(options).into(vht.iv);
+//        vht.iv.setBackgroundDrawable(getBitmapFromAssets("image/" + topicList.get(position).getName().toLowerCase()
+//                .replace(" ", "_") + ".jpg"));
         vht.tv.setText(topicList.get(position).getTranslate());
 
         return convertView;

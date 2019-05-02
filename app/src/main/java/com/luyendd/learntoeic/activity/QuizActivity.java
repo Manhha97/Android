@@ -67,7 +67,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 topic_id = getIntent().getIntExtra(Const.TOPIC_ID, 1);
                 Log.d(TAG, topic_id + "");
 
-                for (Voca voca : MainActivity.vocaList) {
+                vocaQuizs.clear();
+                for (Voca voca : VocaDetailsActivity.vocaList) {
                     vocaQuizs.add(new VocaQuiz(voca.getId(), voca.getVocabulary(), voca.getTranslate(), false));
                     Log.d(TAG, voca.toString());
                 }

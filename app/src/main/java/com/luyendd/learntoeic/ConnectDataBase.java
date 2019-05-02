@@ -231,4 +231,25 @@ public class ConnectDataBase extends SQLiteOpenHelper {
         close();
     }
 
+    public List<Voca> getRandomListQuiz() {
+        try {
+            openDataBase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        List<Voca> vocaList = new ArrayList<>();
+        String sql = "select * from mytoeic600 ORDER BY RANDOM() LIMIT 20";
+        Cursor cursor = myDataBase.rawQuery(sql, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            vocaList.add(new Voca(cursor.getInt(0),
+                    cursor.getInt(1), cursor.getInt(2), cursor.getString(3),
+                    cursor.getString(4),cursor.getString(5),cursor.getString(6)
+                    ,cursor.getString(7), cursor.getString(8), cursor.getInt(9)));
+            cursor.moveToNext();
+        }
+        close();
+        return vocaList;
+    }
+
 }

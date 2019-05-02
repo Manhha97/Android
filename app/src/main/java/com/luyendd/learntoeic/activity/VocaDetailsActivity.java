@@ -13,10 +13,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.adapter.AdapterVoca;
 import com.luyendd.learntoeic.adapter.PagerAdapter;
+import com.luyendd.learntoeic.obj.Voca;
 import com.luyendd.learntoeic.utils.Const;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public class VocaDetailsActivity extends AppCompatActivity {
 
@@ -29,11 +34,26 @@ public class VocaDetailsActivity extends AppCompatActivity {
     //Luu lai vi tri cua cua item hien tai
     public static int mPostion = 0;
 
-
+    private boolean isTopicFavorite = false;
+    private ConnectDataBase connectDataBase;
+    public static List<Voca> vocaList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voca_details);
+
+        connectDataBase = new ConnectDataBase(this);
+        //check favourite
+        isTopicFavorite = getIntent().getBooleanExtra(Const.TOPIC_FAVOURITE, false);
+        try {
+            if (isTopicFavorite) {
+                vocaList = connectDataBase.getListFavorite();
+            } else {
+                vocaList = connectDataBase.getVocaFromTopic(getIntent().getIntExtra(Const.TOPIC_ID, 3));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         //set title va hien thi nut back
         String titleName = getIntent().getStringExtra(Const.TOPIC_NAME);
@@ -42,7 +62,7 @@ public class VocaDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         listView = findViewById(R.id.list_view_voca);
-        adapterVoca = new AdapterVoca(this, MainActivity.vocaList);
+        adapterVoca = new AdapterVoca(this, vocaList);
         listView.setAdapter(adapterVoca);
         adapterVoca.notifyDataSetChanged();
 
@@ -50,20 +70,19 @@ public class VocaDetailsActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.pager);
         // su dung pageradapter trong view pager
         final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), MainActivity.vocaList);
+                (getSupportFragmentManager(), vocaList);
         viewPager.setAdapter(adapter);
         // su kien thay doi cac page
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "[position] : " + position);
                 mPostion = position;
-
-
             }
 
             @Override
