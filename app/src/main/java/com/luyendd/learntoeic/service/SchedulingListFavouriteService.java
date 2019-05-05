@@ -11,17 +11,15 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.luyendd.learntoeic.R;
-import com.luyendd.learntoeic.activity.MainActivity;
 import com.luyendd.learntoeic.activity.VocaDetailsActivity;
-import com.luyendd.learntoeic.obj.Voca;
 import com.luyendd.learntoeic.utils.Const;
 
-public class SchedulingVocaFavouriteService extends IntentService {
+public class SchedulingListFavouriteService extends IntentService {
 
     private static final int TIME_VIBRATE = 1000;
 
-    public SchedulingVocaFavouriteService() {
-        super(SchedulingVocaFavouriteService.class.getSimpleName());
+    public SchedulingListFavouriteService() {
+        super(SchedulingListFavouriteService.class.getSimpleName());
     }
 
     @Override

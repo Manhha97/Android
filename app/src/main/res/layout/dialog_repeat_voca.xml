@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:padding="20dp"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:text="Reminder"
+        android:textSize="20dp"
+        android:textColor="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:id="@+id/switchReminder"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:id="@+id/edit_text_minute_repeat"
+        android:hint="Enter the time"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switchReminder"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:text="Save"
+        android:textColor="@android:color/white"
+        android:background="@color/colorAccent"
+        android:id="@+id/btnSaveTime"
+        android:layout_below="@+id/edit_text_minute_repeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="Close"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/btnClose"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/btnSaveTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

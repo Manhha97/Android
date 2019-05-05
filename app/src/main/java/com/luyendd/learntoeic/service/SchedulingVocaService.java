@@ -10,23 +10,38 @@ import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.activity.MainActivity;
 import com.luyendd.learntoeic.obj.Voca;
 import com.luyendd.learntoeic.utils.Const;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class SchedulingVocaService extends IntentService {
 
+    public static ConnectDataBase cdb;
+    public static List<Voca> vocaFavorite = new ArrayList<>();
     private static final int TIME_VIBRATE = 1000;
 
     public SchedulingVocaService() {
-        super(SchedulingVocaFavouriteService.class.getSimpleName());
+        super(SchedulingListFavouriteService.class.getSimpleName());
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("Scheduling Service", "[running notification]");
-        Voca voca = (Voca) intent.getSerializableExtra(Const.VOCA);
+        try {
+            cdb = new ConnectDataBase(this);
+            vocaFavorite = cdb.getListFavorite();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Voca voca = vocaFavorite.get(new Random().nextInt(vocaFavorite.size()));
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
