@@ -8,4 +8,5 @@ public class Const {
     public final static String ALARM_MINUTE = "alarm_minute";
     public final static String TOPIC_FAVOURITE = "favourite";
     public final static String IS_REMINDER_VOCA = "is_reminder_voca";
+    public final static String NOTICE_LEARN_FAVOURITE = "notice_learn_favorite";
 }

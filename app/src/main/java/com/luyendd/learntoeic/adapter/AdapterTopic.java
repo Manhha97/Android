@@ -65,14 +65,14 @@ public class AdapterTopic extends BaseAdapter {
 //
         RequestOptions options = new RequestOptions();
         options.centerCrop();
-        options.fitCenter();
-        Glide.with(context)
-                .load("file:///android_asset/image/"+
-                        topicList.get(position).getName().toLowerCase()
-                                .replace(" ", "_") + ".jpg")
-                .apply(options).into(vht.iv);
-//        vht.iv.setBackgroundDrawable(getBitmapFromAssets("image/" + topicList.get(position).getName().toLowerCase()
-//                .replace(" ", "_") + ".jpg"));
+//        options.fitCenter();
+//        Glide.with(context)
+//                .load("file:///android_asset/image/"+
+//                        topicList.get(position).getName().toLowerCase()
+//                                .replace(" ", "_") + ".jpg")
+//                .apply(options).into(vht.iv);
+        vht.iv.setBackgroundDrawable(getBitmapFromAssets("image/" + topicList.get(position).getName().toLowerCase()
+                .replace(" ", "_") + ".jpg"));
         vht.tv.setText(topicList.get(position).getTranslate());
 
         return convertView;

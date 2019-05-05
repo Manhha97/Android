@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,12 +37,27 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     Button btnNext;
     boolean isAnswer = false;
     ConnectDataBase connectDataBase;
+    List<Voca> vocaList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-        initDataQuiz();
+        getSupportActionBar().setTitle("Quiz");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         connectDataBase = new ConnectDataBase(this);
+        topic_id = getIntent().getIntExtra(Const.TOPIC_ID, 1);
+        Log.d(TAG, topic_id + "");
+        try {
+            if (topic_id == 0) {
+                vocaList = connectDataBase.getListFavorite();
+            } else {
+                vocaList = connectDataBase.getVocaFromTopic(topic_id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        initDataQuiz();
     }
 
     private void initDataQuiz(){
@@ -63,12 +79,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 tvAnswer3.setOnClickListener(QuizActivity.this);
                 tvAnswer4.setOnClickListener(QuizActivity.this);
 
-
-                topic_id = getIntent().getIntExtra(Const.TOPIC_ID, 1);
-                Log.d(TAG, topic_id + "");
-
                 vocaQuizs.clear();
-                for (Voca voca : VocaDetailsActivity.vocaList) {
+                for (Voca voca : vocaList) {
                     vocaQuizs.add(new VocaQuiz(voca.getId(), voca.getVocabulary(), voca.getTranslate(), false));
                     Log.d(TAG, voca.toString());
                 }
@@ -208,4 +220,11 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

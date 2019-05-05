@@ -1,10 +1,7 @@
 package com.luyendd.learntoeic.activity;
 
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -33,7 +30,6 @@ import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.adapter.AdapterTopic;
 import com.luyendd.learntoeic.obj.Topic;
 import com.luyendd.learntoeic.obj.Voca;
-import com.luyendd.learntoeic.service.SchedulingService;
 import com.luyendd.learntoeic.utils.AlarmUtil;
 import com.luyendd.learntoeic.utils.Const;
 import com.smarteist.autoimageslider.DefaultSliderView;
@@ -47,7 +43,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView;
     public static ConnectDataBase cdb;
     List<Topic> topicList;
-    List<Voca> vocaFavorite = new ArrayList<>();
     AdapterTopic adapterTopic;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -124,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             cdb.createDataBase();
             topicList = cdb.getListTopic();
+//            vocaFavorite = cdb.getRandomListQuiz();
+//            for (Voca voca : vocaFavorite) {
+//                Log.d(TAG, "[QUIZ] : "+voca.getVocabulary());
+//            }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -255,12 +253,6 @@ public class MainActivity extends AppCompatActivity {
                         swReminder.setChecked(false);
                     }
                 }
-
-//                if (isChecked) {
-//                    turnOnAlarm();
-//                } else {
-//                    turnOffAlarm();
-//                }
             }
         });
 
@@ -291,15 +283,6 @@ public class MainActivity extends AppCompatActivity {
                     AlarmUtil.turnOffAlarm();
                  }
 
-//                Voca voca = null;
-//                try {
-//                    voca = cdb.getListFavorite().get(new Random().nextInt(cdb.getListFavorite().size() - 1));
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//                Intent intent = new Intent(MainActivity.this, SchedulingService.class);
-//                intent.putExtra(Const.VOCA, voca);
-//                startService(intent);
                 dialog.dismiss();
             }
         });

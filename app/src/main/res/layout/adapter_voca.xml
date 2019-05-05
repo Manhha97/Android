@@ -50,6 +50,7 @@
         android:id="@+id/imagebuttonFavorite"
         android:layout_centerVertical="true"
         android:layout_width="30dp"
+        android:visibility="gone"
         android:background="@drawable/ic_not_favorite"
         android:layout_height="30dp" />
 

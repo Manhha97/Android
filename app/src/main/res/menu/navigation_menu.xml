@@ -10,10 +10,8 @@
 
     <item
         android:id="@+id/menu_remider_voca"
-        android:title="Reminder"
+        android:title="Reminder learn voca  favourite"
         android:icon="@drawable/ic_alarm"
         />
-
-
 
 </menu>

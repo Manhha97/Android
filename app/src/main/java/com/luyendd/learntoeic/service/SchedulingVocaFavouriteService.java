@@ -12,22 +12,24 @@ import android.util.Log;
 
 import com.luyendd.learntoeic.R;
 import com.luyendd.learntoeic.activity.MainActivity;
+import com.luyendd.learntoeic.activity.VocaDetailsActivity;
 import com.luyendd.learntoeic.obj.Voca;
 import com.luyendd.learntoeic.utils.Const;
 
-public class SchedulingService  extends IntentService {
+public class SchedulingVocaFavouriteService extends IntentService {
 
     private static final int TIME_VIBRATE = 1000;
 
-    public SchedulingService() {
-        super(SchedulingService.class.getSimpleName());
+    public SchedulingVocaFavouriteService() {
+        super(SchedulingVocaFavouriteService.class.getSimpleName());
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("Scheduling Service", "[running notification]");
-        Voca voca = (Voca) intent.getSerializableExtra(Const.VOCA);
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, VocaDetailsActivity.class);
+        notificationIntent.putExtra(Const.TOPIC_FAVOURITE, true);
+        notificationIntent.putExtra(Const.TOPIC_NAME, "Favourite");
         notificationIntent
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         int requestID = (int) System.currentTimeMillis();
@@ -37,7 +39,7 @@ public class SchedulingService  extends IntentService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(getString(R.string.app_name))
-                        .setContentText(voca.getVocabulary() + " : " + voca.getTranslate() )
+                        .setContentText("Learn voca favourite")
                         .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                         .setDefaults(Notification.DEFAULT_SOUND)
                         .setAutoCancel(true)

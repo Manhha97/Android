@@ -2,7 +2,6 @@ package com.luyendd.learntoeic.utils;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +12,8 @@ import android.widget.Toast;
 
 import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.obj.Voca;
-import com.luyendd.learntoeic.service.SchedulingService;
+import com.luyendd.learntoeic.service.SchedulingVocaFavouriteService;
 
-import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,8 +39,8 @@ public class AlarmUtil {
         if (vocaFavorite.size() != 0) {
 
             alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Voca voca = vocaFavorite.get(new Random().nextInt(vocaFavorite.size() - 1));
-            Intent intent = new Intent(context, SchedulingService.class);
+            Voca voca = vocaFavorite.get(new Random().nextInt(vocaFavorite.size()));
+            Intent intent = new Intent(context, SchedulingVocaFavouriteService.class);
             intent.putExtra(Const.VOCA, voca);
 
             pendingIntent =

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.luyendd.learntoeic.ConnectDataBase;
 import com.luyendd.learntoeic.R;
@@ -111,6 +112,13 @@ public class VocaDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //an hien list voca
+        int topicID = 0;
+        if (isTopicFavorite)  {
+            topicID = 0;
+        } else {
+            topicID = getIntent().getIntExtra(Const.TOPIC_ID, 2);
+        }
+
         if(item.getItemId() == R.id.menu_show_voca){
 
             if (listView.getVisibility() != View.VISIBLE) {
@@ -121,10 +129,16 @@ public class VocaDetailsActivity extends AppCompatActivity {
             }
 
         } else  if (item.getItemId() == R.id.menu_quiz) {
+            if (vocaList.size() > 3) {
 
-            Intent i = new Intent(VocaDetailsActivity.this, QuizActivity.class);
-            i.putExtra(Const.TOPIC_ID, getIntent().getIntExtra(Const.TOPIC_ID, 2));
-            startActivity(i);
+                Intent i = new Intent(VocaDetailsActivity.this, QuizActivity.class);
+                i.putExtra(Const.TOPIC_ID, topicID);
+                startActivity(i);
+            } else {
+                Toast.makeText(VocaDetailsActivity.this,
+                        "Du lieu qua it de tien hanh luyen tap", Toast.LENGTH_SHORT).show();
+            }
+
 
         } else if (item.getItemId() == android.R.id.home){
 
@@ -132,7 +146,7 @@ public class VocaDetailsActivity extends AppCompatActivity {
 
         } else if (item.getItemId() == R.id.menu_statistic) {
             Intent i = new Intent(VocaDetailsActivity.this, StatisticResultTestActivity.class);
-            i.putExtra(Const.TOPIC_ID, getIntent().getIntExtra(Const.TOPIC_ID, 1));
+            i.putExtra(Const.TOPIC_ID, topicID);
             startActivity(i);
 
         }
